@@ -1,0 +1,24 @@
+{
+  "girlfriendPhone": "",
+  "girlfriendName": "vidinha",
+  "yourName": "vidinha",
+  "sendTime": "14:30",
+  "activeDays": [
+    "mon",
+    "tue",
+    "wed",
+    "thu",
+    "fri",
+    "sat",
+    "sun"
+  ],
+  "mode": "fixed",
+  "fixedMessage": "Oi vidinha! Passando pra te lembrar de tomar o seu remédio agora! Já tomou? Não esquece da aguinha. Te amo muito! 💊❤️",
+  "tone": "remedio",
+  "customPromptContext": "Lembrete diário para ela tomar o remédio às 14:30 com carinho.",
+  "geminiApiKey": "",
+  "customMessages": [
+    "Oi vidinha! Passando só pra te lembrar do seu remédio. Já tomou? Te amo! 💊❤️",
+    "Alarme do amor: hora do remédio! Se cuida. Beijo grande! 💧🥰"
+  ]
+}

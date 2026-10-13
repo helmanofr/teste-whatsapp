@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Zap Romântico 💌 | Mensagens Diárias para Ela</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    .font-serif-romantic {
+      font-family: 'Playfair Display', serif;
+    }
+    /* WhatsApp bubble style */
+    .wa-bubble {
+      position: relative;
+      background-color: #d9fdd3;
+      border-radius: 8px 8px 2px 8px;
+      box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+    }
+    .wa-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      right: -8px;
+      width: 0;
+      height: 0;
+      border: 8px solid transparent;
+      border-left-color: #d9fdd3;
+      border-bottom: 0;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-rose-50 via-slate-50 to-pink-50 min-h-screen text-slate-800 pb-16">
+
+  <!-- Top Notification Toast -->
+  <div id="toast" class="fixed top-5 right-5 z-50 transform transition-all duration-300 translate-y-[-100px] opacity-0 bg-white border border-slate-200 px-4 py-3 rounded-xl shadow-xl flex items-center space-x-3">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg" class="text-sm font-medium">Aviso</span>
+  </div>
+
+  <!-- Header -->
+  <header class="border-b border-rose-100 bg-white/80 backdrop-blur sticky top-0 z-40">
+    <div class="max-w-6xl mx-auto px-4 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-rose-500 to-pink-500 flex items-center justify-center text-white text-xl shadow-md shadow-rose-200">
+          💌
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-slate-900 leading-tight flex items-center gap-1.5">
+            Zap Romântico
+            <span class="text-xs bg-rose-100 text-rose-700 px-2 py-0.5 rounded-full font-semibold">14:30 Todo Dia</span>
+          </h1>
+          <p class="text-xs text-slate-500">Automação de carinho e presença diária</p>
+        </div>
+      </div>
+
+      <!-- Quick status badges -->
+      <div class="flex items-center space-x-3">
+        <div id="connectionPill" class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+          <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+          <span id="connectionText">Iniciando...</span>
+        </div>
+
+        <div class="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600">
+          <span>⏰ Horário:</span>
+          <span id="scheduleBadge" class="font-bold text-slate-800">14:30</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="max-w-6xl mx-auto px-4 pt-8">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+      <!-- LEFT COLUMN: WhatsApp Connection & Quick Test (5 cols) -->
+      <div class="lg:col-span-5 space-y-6">
+
+        <!-- Card: WhatsApp Connection -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-rose-100/80">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span class="text-emerald-500">📱</span> Conexão do WhatsApp
+            </h2>
+            <button id="btnRefreshStatus" title="Atualizar status" class="text-xs text-slate-400 hover:text-slate-600 transition p-1">
+              🔄
+            </button>
+          </div>
+
+          <!-- Disconnected / QR Code View -->
+          <div id="qrSection" class="text-center py-2 space-y-4">
+            <div class="p-3 bg-slate-50 rounded-2xl border border-slate-100 inline-block relative group">
+              <div id="qrLoading" class="w-56 h-56 flex flex-col items-center justify-center text-slate-400 space-y-2">
+                <div class="w-8 h-8 border-3 border-rose-400 border-t-transparent rounded-full animate-spin"></div>
+                <span class="text-xs font-medium">Gerando QR Code...</span>
+              </div>
+              <img id="qrImage" src="" alt="QR Code WhatsApp" class="w-56 h-56 hidden mx-auto rounded-lg" />
+            </div>
+
+            <div class="text-left bg-rose-50/60 p-4 rounded-2xl border border-rose-100/60 text-xs text-slate-600 space-y-2">
+              <p class="font-bold text-rose-900 flex items-center gap-1.5">
+                <span>📲</span> Como conectar em 10 segundos:
+              </p>
+              <ol class="list-decimal list-inside space-y-1 text-slate-600 ml-1">
+                <li>Abra o <b>WhatsApp</b> no seu celular</li>
+                <li>Vá em <b>Configurações</b> ou no menu de 3 pontos</li>
+                <li>Toque em <b>Aparelhos Conectados</b></li>
+                <li>Toque em <b>Conectar um aparelho</b> e aponte para o QR Code acima</li>
+              </ol>
+            </div>
+          </div>
+
+          <!-- Connected View -->
+          <div id="connectedSection" class="hidden text-center py-6 space-y-4">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-3xl mx-auto flex items-center justify-center text-3xl shadow-sm">
+              ✓
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-slate-900">WhatsApp Conectado!</h3>
+              <p id="connectedUserInfo" class="text-xs text-slate-500 mt-0.5">Sessão ativa e pronta para enviar</p>
+            </div>
+            <div class="pt-2">
+              <button id="btnLogout" class="text-xs text-rose-600 hover:text-rose-700 hover:bg-rose-50 font-semibold px-4 py-2 rounded-xl transition border border-rose-200">
+                Desconectar / Trocar de Conta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card: Test Sending -->
+        <div class="bg-gradient-to-br from-rose-500 to-pink-600 rounded-3xl p-6 text-white shadow-lg shadow-rose-200">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full uppercase tracking-wider">
+                ⚡ Teste Imediato
+              </span>
+              <h3 class="text-lg font-bold mt-2 font-serif-romantic">Quer testar agora?</h3>
+              <p class="text-xs text-rose-100 mt-1">
+                Dispara uma mensagem de teste agora mesmo para o WhatsApp configurado para ver funcionando.
+              </p>
+            </div>
+            <span class="text-3xl">🚀</span>
+          </div>
+
+          <div class="mt-5 space-y-3">
+            <button id="btnSendTest" class="w-full bg-white text-rose-600 hover:bg-rose-50 font-bold py-3 px-4 rounded-2xl text-sm transition shadow-sm flex items-center justify-center gap-2">
+              <span id="btnSendTestIcon">💌</span>
+              <span id="btnSendTestText">Enviar Teste no WhatsApp Dela</span>
+            </button>
+            <p class="text-[11px] text-center text-rose-200">
+              *Enviará a mensagem atual diretamente para o número salvo abaixo.
+            </p>
+          </div>
+        </div>
+
+        <!-- WhatsApp Preview Simulation Bubble -->
+        <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-100">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+              <span>👁️</span> Como ela vai receber:
+            </span>
+            <button id="btnRefreshPreview" class="text-xs text-rose-600 hover:text-rose-700 font-semibold flex items-center gap-1">
+              <span>🎲</span> Gerar outra frase
+            </button>
+          </div>
+
+          <!-- WhatsApp Chat Mockup -->
+          <div class="bg-[#efeae2] p-4 rounded-2xl border border-slate-200/80 min-h-[130px] flex flex-col justify-end">
+            <div class="wa-bubble p-3 max-w-[92%] ml-auto text-slate-800 text-sm leading-relaxed">
+              <p id="previewBubbleText" class="text-slate-800 break-words whitespace-pre-wrap">
+                Oi meu amor! Passando só pra te lembrar do quanto você é especial pra mim. Tenha uma tarde incrível, te amo! ❤️
+              </p>
+              <div class="text-[10px] text-slate-400 text-right mt-1.5 flex items-center justify-end gap-1">
+                <span id="previewTime">14:30</span>
+                <span class="text-sky-500 font-bold">✓✓</span>
+              </div>
+            </div>
+          </div>
+          <p id="previewSourceBadge" class="text-[11px] text-slate-400 mt-2 text-center">
+            Origem: Frase carinhosa recomendada
+          </p>
+        </div>
+
+      </div>
+
+      <!-- RIGHT COLUMN: Settings Form & History (7 cols) -->
+      <div class="lg:col-span-7 space-y-6">
+
+        <!-- Form: Settings -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-rose-100/80">
+          <div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-100">
+            <div>
+              <h2 class="text-xl font-bold text-slate-900 font-serif-romantic">Configurações do Amor</h2>
+              <p class="text-xs text-slate-500 mt-0.5">Personalize o horário, apelidos e detalhes sobre ela</p>
+            </div>
+            <span class="text-2xl">🌹</span>
+          </div>
+
+          <form id="settingsForm" class="space-y-5">
+            <!-- Row 1: Telefone e Horário -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Número dela no WhatsApp <span class="text-rose-500">*</span>
+                </label>
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="girlfriendPhone"
+                    placeholder="Ex: 11 99999-8888 ou 5511999998888"
+                    class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+                    required
+                  />
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">Com DDD (o sistema adiciona 55 automaticamente).</p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Horário do Envio <span class="text-rose-500">*</span>
+                </label>
+                <input
+                  type="time"
+                  id="sendTime"
+                  value="14:30"
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm font-semibold text-slate-800 transition"
+                  required
+                />
+                <p class="text-[11px] text-slate-400 mt-1">Horário de Brasília (recomendo 14:30 no meio da tarde!).</p>
+              </div>
+            </div>
+
+            <!-- Row 2: Nomes -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Como você a chama (Apelidos)
+                </label>
+                <input
+                  type="text"
+                  id="girlfriendName"
+                  placeholder="Ex: Amor, Princesa, Vida, Duda"
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+                />
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Seu Nome / Como ela te chama
+                </label>
+                <input
+                  type="text"
+                  id="yourName"
+                  placeholder="Ex: Lucas, Seu preto"
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+                />
+              </div>
+            </div>
+
+            <!-- Box: Mensagem Personalizada do Remédio -->
+            <div class="bg-rose-50/70 border border-rose-200/80 rounded-2xl p-4 space-y-3">
+              <div class="flex items-center justify-between">
+                <label class="block text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>💊</span> Sua Mensagem Exata do Remédio
+                </label>
+                <span class="text-[11px] bg-rose-200 text-rose-800 font-semibold px-2 py-0.5 rounded-full">
+                  Você escolhe a frase
+                </span>
+              </div>
+              <textarea
+                id="fixedMessage"
+                rows="3"
+                placeholder="Digite a frase exata para lembrar do remédio..."
+                class="w-full bg-white border border-rose-200 focus:border-rose-400 focus:outline-none rounded-xl py-2.5 px-3.5 text-sm transition text-slate-800 shadow-sm"
+              ></textarea>
+              
+              <div class="space-y-1.5">
+                <span class="text-[11px] font-semibold text-slate-500">Sugestões rápidas para o remédio (clique para usar):</span>
+                <div class="flex flex-wrap gap-1.5">
+                  <button type="button" class="btn-template-chip text-[11px] bg-white hover:bg-rose-100 border border-rose-200 text-rose-700 px-2.5 py-1 rounded-lg transition font-medium" data-text="Oi vidinha! Passando pra te lembrar de tomar o seu remédio agora! Já tomou? Não esquece da aguinha. Te amo muito! 💊❤️">
+                    💊 Com carinho & água
+                  </button>
+                  <button type="button" class="btn-template-chip text-[11px] bg-white hover:bg-rose-100 border border-rose-200 text-rose-700 px-2.5 py-1 rounded-lg transition font-medium" data-text="Hora do seu remedinho, princesa! Toma agora pra não passar da hora, tá bom? Te amo! ⏰💖">
+                    ⏰ Hora do remedinho
+                  </button>
+                  <button type="button" class="btn-template-chip text-[11px] bg-white hover:bg-rose-100 border border-rose-200 text-rose-700 px-2.5 py-1 rounded-lg transition font-medium" data-text="Alarme do amor: não esquece de tomar o remédio, vida! Tô aqui cuidando de você de longe. Beijo grande! 💧🥰">
+                    💧 Alarme com cuidado
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Row 3: Modo e Tom -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Modo de Envio
+                </label>
+                <select
+                  id="mode"
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+                >
+                  <option value="fixed" selected>📌 Mensagem Fixa (Envia SEMPRE o texto exato que você escreveu acima)</option>
+                  <option value="hybrid">✨ IA Criativa (Varia todo dia lembrando do remédio)</option>
+                  <option value="ai">🤖 Apenas Inteligência Artificial (Gemini)</option>
+                  <option value="custom">📝 Lista de Frases</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  Estilo / Tom (Caso use IA)
+                </label>
+                <select
+                  id="tone"
+                  class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+                >
+                  <option value="remedio" selected>💊 Lembrar do Remédio com Carinho & Cuidado</option>
+                  <option value="romantico">❤️ Romântico & Apaixonado</option>
+                  <option value="fofo">🌸 Fofo & Carinhoso</option>
+                  <option value="engracado">😂 Bem-humorado & Descontraído</option>
+                  <option value="motivador">💪 Motivador & Força pra tarde</option>
+                  <option value="poetico">🌌 Poético & Profundo</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Row 4: Dias da Semana -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                Dias de Envio
+              </label>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="seg" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Seg</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="ter" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Ter</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="qua" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Qua</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="qui" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Qui</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="sex" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Sex</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="sab" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Sáb</span>
+                </label>
+                <label class="flex items-center space-x-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-xl cursor-pointer">
+                  <input type="checkbox" name="activeDay" value="dom" checked class="rounded text-rose-500 focus:ring-rose-400" />
+                  <span>Dom</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Row 5: Contexto para IA (Segredo do sucesso) -->
+            <div>
+              <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center justify-between">
+                <span>Detalhes sobre ela & Piadas Internas (Para a IA)</span>
+                <span class="text-[11px] font-normal text-rose-500">Deixa a mensagem única!</span>
+              </label>
+              <textarea
+                id="customPromptContext"
+                rows="3"
+                placeholder="Ex: Ela toma muito café à tarde, estuda pra concurso, ama sorvete de baunilha, nosso combinado de viajar no fim do ano..."
+                class="w-full bg-slate-50 border border-slate-200 focus:border-rose-400 focus:bg-white focus:outline-none rounded-2xl py-2.5 px-3.5 text-sm transition"
+              ></textarea>
+              <p class="text-[11px] text-slate-400 mt-1">
+                A IA vai ler isso e criar frases com a carinha do casal, sem parecer robô.
+              </p>
+            </div>
+
+            <!-- Row 6: Chave Gemini (Opcional) -->
+            <div class="bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 space-y-2">
+              <div class="flex items-center justify-between">
+                <label class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <span>🔑</span> Chave Google Gemini API (Grátis)
+                </label>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener" class="text-xs text-rose-600 hover:underline font-semibold flex items-center gap-0.5">
+                  Pegar chave grátis ↗
+                </a>
+              </div>
+              <input
+                type="password"
+                id="geminiApiKey"
+                placeholder="Cole sua chave aqui (Ex: AIzaSy...)"
+                class="w-full bg-white border border-slate-200 focus:border-rose-400 focus:outline-none rounded-xl py-2 px-3 text-xs transition"
+              />
+              <p class="text-[11px] text-slate-500 leading-relaxed">
+                *Opcional! Se você não colocar a chave, o sistema usa automaticamente nossa lista de mais de 50 mensagens carinhosas prontas. Se colocar a chave gratuita da Google, a IA gera mensagens infinitas e inéditas todo dia!
+              </p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-2">
+              <button
+                type="submit"
+                id="btnSaveSettings"
+                class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-2xl text-sm transition shadow-md flex items-center justify-center gap-2"
+              >
+                <span>💾</span>
+                <span>Salvar Configurações</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- History & Logs Section -->
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-rose-100/80 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span>📜</span> Histórico de Mensagens Enviadas
+            </h3>
+            <button id="btnRefreshHistory" class="text-xs text-slate-400 hover:text-slate-600 transition p-1">
+              🔄
+            </button>
+          </div>
+
+          <div id="historyContainer" class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+            <p class="text-xs text-slate-400 text-center py-6">Nenhuma mensagem enviada ainda. Faça um teste acima!</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
