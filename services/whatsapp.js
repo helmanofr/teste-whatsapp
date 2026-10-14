@@ -61,7 +61,10 @@ class WhatsAppService {
         printQRInTerminal: false,
         logger: pino({ level: 'silent' }),
         browser: ['Zap Romantico', 'Chrome', '1.0.0'],
-        syncFullHistory: false
+        syncFullHistory: false,
+        markOnlineOnConnect: false,
+        shouldSyncHistoryMessage: () => false,
+        emitOwnEvents: false
       });
 
       this.sock.ev.on('creds.update', saveCreds);
@@ -117,6 +120,13 @@ class WhatsAppService {
           this.qrRaw = null;
           this.user = this.sock.user;
           this.notifyStateChange();
+
+          // Define presença como 'unavailable' (offline) para o celular receber notificações normalmente
+          try {
+            await this.sock.sendPresenceUpdate('unavailable');
+          } catch (presenceErr) {
+            // Ignora silenciosamente se houver falha na presença
+          }
         }
       });
     } catch (err) {
